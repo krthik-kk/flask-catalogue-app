@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalogue Management System</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        /* Removed :root and dark-mode variables, using light mode defaults directly */
+        body {
+            background: #eaf6fb; /* var(--primary-bg) */
+            min-height: 100vh;
+            margin: 0;
+            color: #1a3c4e; /* var(--primary-color) */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            /* Removed transition for background/color */
+        }
+        .main-container {
+            max-width: 1800px;
+            min-width: 1200px;
+            margin: -60px auto 0 auto;
+            background: #fafdff; /* var(--secondary-bg) */
+            border-radius: 24px;
+            border: none;
+            padding: 0 0 50px 0;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.10);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%); /* var(--navbar-bg) */
+            padding: 0 48px;
+            height: 90px;
+            border-radius: 24px 24px 0 0;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+        }
+        .navbar .logo {
+            font-size: 2.4em;
+            color: #2196f3; /* var(--accent-color) */
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI Semibold', Arial, sans-serif;
+            text-transform: uppercase;
+            padding: 10px 0;
+            border-radius: 12px;
+        }
+        .navbar .logout-bar button,
+        .top-bar form button {
+            background: none;
+            color: #1976d2; /* var(--logout-color) */
+            border: none;
+            padding: 12px 32px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: none;
+            letter-spacing: 1px;
+        }
+        .navbar .logout-bar button:hover,
+        .top-bar form button:hover {
+            background: #e3f2fd; /* var(--logout-hover-bg) */
+            color: #2196f3; /* var(--logout-hover-color) */
+        }
+        /* Removed #toggle-mode-btn styles as the button is removed */
+        h1 {
+            text-align: center;
+            margin: 56px 0 20px 0;
+            font-size: 3.2em;
+            color: #1a3c4e; /* var(--primary-color) */
+            letter-spacing: 4px;
+            border-radius: 14px;
+            padding: 18px 0 10px 0;
+            font-family: 'Segoe UI Semibold', Arial, sans-serif;
+            background: #fafdff; /* var(--secondary-bg) */
+        }
+        h1::after {
+            content: "";
+            display: block;
+            margin: 0 auto;
+            margin-top: 12px;
+            width: 0;
+            height: 6px;
+            border-radius: 3px;
+            background: #2196f3; /* var(--accent-color) */
+            /* Removed animation: underlineGrow */
+        }
+        /* Removed @keyframes underlineGrow */
+        section {
+            margin: 40px auto 0 auto;
+            max-width: 1600px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 44px 60px 36px 60px;
+            border-radius: 20px;
+            background: #fafdff; /* var(--secondary-bg) */
+            border: none;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            background: #e3f2fd; /* var(--input-bg) */
+            padding: 18px 18px 18px 18px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+            max-width: 100%;
+        }
+        .top-bar button {
+            background: linear-gradient(90deg, #2196f3 80%, #6dd5ed 100%); /* var(--button-bg) */
+            color: #fff; /* var(--button-color) */
+            border: none;
+            border-radius: 12px;
+            font-size: 1.13em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 0;
+            transition: background 0.2s, color 0.2s;
+            letter-spacing: 1px;
+            padding: 14px 36px;
+        }
+        .top-bar button:hover {
+            background: linear-gradient(90deg, #1976d2 80%, #2196f3 100%); /* var(--button-hover-bg) */
+            color: #fff; /* var(--button-color) */
+            box-shadow: 0 2px 8px #ff990055;
+        }
+        .top-bar input[type="text"], .top-bar select {
+            background: #e3f2fd; /* var(--input-bg) */
+            border: 1.5px solid #90caf9; /* var(--input-border) */
+            color: #1a3c4e; /* var(--primary-color) */
+            border-radius: 12px;
+            padding: 14px 18px;
+            min-width: 240px;
+            font-size: 1.13em;
+            margin-bottom: 0;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: none;
+        }
+        .top-bar input[type="text"]:hover, .top-bar select:hover {
+            background: #fff;
+            box-shadow: 0 2px 8px #ff990055;
+        }
+        .top-bar input[type="text"]:focus, .top-bar select:focus {
+            border: 1.5px solid #2196f3; /* var(--accent-color) */
+            box-shadow: 0 2px 12px #ff990055;
+            outline: none;
+        }
+        #catalogue-form {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 28px;
+            align-items: flex-end;
+            margin-bottom: 14px;
+            background: #e3f2fd; /* var(--input-bg) */
+            border-radius: 18px;
+            padding: 32px 24px 22px 24px;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+            max-width: 100%;
+        }
+        #catalogue-form.edit-mode {
+            flex-direction: row !important;
+            align-items: flex-end;
+            gap: 28px;
+        }
+        @media (max-width: 1300px) {
+            #catalogue-form,
+            #catalogue-form.edit-mode {
+                flex-direction: column !important;
+                gap: 10px;
+            }
+        }
+        #catalogue-form input,
+        #catalogue-form select {
+            background: #fafdff; /* var(--secondary-bg) */
+            border: 1.5px solid #90caf9; /* var(--input-border) */
+            color: #1a3c4e; /* var(--primary-color) */
+            border-radius: 12px;
+            padding: 16px 18px;
+            font-size: 1.13em;
+            transition: border 0.2s;
+            box-shadow: none;
+        }
+        #catalogue-form input:hover,
+        #catalogue-form select:hover {
+            background: #fff;
+            box-shadow: 0 2px 8px #ff990055;
+        }
+        #catalogue-form input:focus,
+        #catalogue-form select:focus {
+            border: 1.5px solid #2196f3; /* var(--accent-color) */
+            box-shadow: 0 2px 12px #ff990055;
+        }
+        #catalogue-form button {
+            background: linear-gradient(90deg, #2196f3 80%, #6dd5ed 100%); /* var(--button-bg) */
+            color: #fff; /* var(--button-color) */
+            border-radius: 12px;
+            padding: 16px 0;
+            font-size: 1.13em;
+            box-shadow: none;
+        }
+        #catalogue-form button:hover {
+            background: linear-gradient(90deg, #1976d2 80%, #2196f3 100%); /* var(--button-hover-bg) */
+            color: #fff; /* var(--button-color) */
+            box-shadow: 0 2px 8px #ff990055;
+        }
+        #catalogue-table {
+            font-size: 1.13em;
+            border-radius: 16px;
+            margin-top: 22px;
+            background: #fafdff; /* var(--secondary-bg) */
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+            padding: 8px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            max-width: 100%;
+        }
+        #catalogue-table th, #catalogue-table td {
+            border-radius: 8px;
+            padding: 16px 18px;
+        }
+        #catalogue-table th {
+            background: #f5f7fa;
+            color: #232f3e;
+            font-size: 1.13em;
+            border: none;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            box-shadow: none;
+            text-shadow: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        #catalogue-table th[data-sort]:hover {
+            background: #e3eaf5;
+            color: #1976d2;
+            cursor: pointer;
+            text-shadow: none;
+        }
+        #catalogue-table td {
+            color: #232f3e;
+            border: none;
+            background: none;
+        }
+        #catalogue-table td:hover {
+            background: #f3f6fa !important;
+            box-shadow: none;
+            color: #1976d2;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        #catalogue-table tbody tr {
+            transition: transform 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 10px;
+        }
+        #catalogue-table tbody tr:hover {
+            background: #f7fafd;
+            transform: scale(1.01);
+            box-shadow: none;
+            z-index: 1;
+            position: relative;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        #pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 28px;
+            gap: 12px;
+            border-radius: 10px;
+            padding: 8px 0;
+            /* Remove any border or highlight bar */
+            border: none;
+            box-shadow: none;
+            background: none;
+        }
+        #pagination button {
+            background: #e3f2fd; /* var(--pagination-bg) */
+            color: #1a3c4e; /* var(--primary-color) */
+            border: 1.5px solid #90caf9; /* var(--input-border) */
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1.08em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        #pagination button[style*="bold"] {
+            background: #2196f3; /* var(--pagination-active-bg) */
+            color: #fff; /* var(--pagination-active-color) */
+        }
+        #pagination button:hover {
+            background: #2196f3; /* var(--accent-color) */
+            color: #fff;
+        }
+        #pagination span {
+            color: #90caf9; /* var(--input-border) */
+        }
+        #message {
+            color: #1976d2; /* var(--message-color) */
+            background: #e3f6ff; /* var(--message-bg) */
+            border-radius: 10px;
+            font-size: 1.15em;
+            margin-top: 28px;
+            padding: 16px;
+            box-shadow: 0 1px 6px #ff990055;
+        }
+        /* Removed .ripple and .ripple-effect styles */
+        /* Removed @keyframes ripple-animate */
+        @media (max-width: 1900px) {
+            .main-container {
+                max-width: 98vw;
+                min-width: 0;
+                padding: 0 2vw 20px 2vw;
+            }
+            section {
+                padding: 18px 2vw 10px 2vw;
+            }
+            #catalogue-form {
+                flex-direction: column;
+                gap: 10px;
+            }
+            #catalogue-form input,
+            #catalogue-form select,
+            #catalogue-form button {
+                max-width: 100%;
+                min-width: 0;
+            }
+        }
+        .status-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 2px;
+            cursor: default;
+            box-shadow: 0 1px 4px #0001;
+            letter-spacing: 1px;
+        }
+        .active-btn {
+            background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .deactive-btn {
+            background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+        }
+        .status-badge {
+            display: inline-block;
+            min-width: 70px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.98em;
+            border-radius: 12px;
+            padding: 5px 16px;
+            margin: 0 2px;
+            letter-spacing: 0.5px;
+            background: #f5f7fa;
+            color: #232f3e;
+            border: 1.5px solid #e0e6ed;
+            box-shadow: none;
+        }
+        .active-badge {
+            background: #e6f9ed;
+            color: #219150;
+            border-color: #b7e4c7;
+        }
+        .deactive-badge {
+            background: #fbeaea;
+            color: #c0392b;
+            border-color: #f5b7b1;
+        }
+        /* Removed @keyframes spin */
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Catalogue Management</h1>
+        <section>
+            <div class="top-bar">
+                <button id="show-add-form">
+                    Add New Catalogue
+                </button>
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <input type="text" id="search-bar" placeholder="Search catalogues...">
+                    <select id="active-filter">
+                        <option value="all">All</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <form action="/logout" method="post" style="display: inline;">
+                        <button type="submit"
+                            style="background: none; color: #0f2027; border: none; padding: 12px 32px; border-radius: 10px;
+                                   font-size: 1.1em; font-weight: bold; cursor: pointer; letter-spacing: 1px; box-shadow: none; margin-left: 8px; transition: background 0.2s, color 0.2s;">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <form id="catalogue-form" style="display:none; margin-top:22px;">
+                <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 28px; width: 100%;">
+                    <input type="number" id="catalogue_id" placeholder="Catalogue ID" required style="background: #ffe9c7; color: #232f3e; font-weight: bold;">
+                    <input type="text" id="name" placeholder="Name" required>
+                    <input type="text" id="description" placeholder="Description">
+                    <input type="date" id="start_date" placeholder="Start Date" required>
+                    <input type="date" id="end_date" placeholder="End Date">
+                    <select id="is_active" required>
+                        <option value="">Is Active?</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                    <button type="submit" id="submit-btn">Create</button>
+                    <button type="button" id="back-btn" style="background: #eee; color: #232f3e; border: 1px solid #ccc; margin-left: 10px; border-radius: 8px; padding: 16px 24px; font-size: 1.13em; font-weight: bold; cursor: pointer;">Back</button>
+                </div>
+            </form>
+        </section>
+        <section>
+            <h2>All Catalogues</h2>
+            <div id="loading-indicator" style="display:none; text-align:center; margin: 30px 0; font-size:1.2em;">
+                <span class="spinner" style="display:inline-block;width:28px;height:28px;border:4px solid #e3f2fd;border-top:4px solid #2196f3;border-radius:50%;/* Removed animation:spin */vertical-align:middle;margin-right:12px;"></span>
+                Loading...
+            </div>
+            <table id="catalogue-table">
+                <thead>
+                    <tr>
+                        <th data-sort="id" style="cursor:pointer;">ID &#8597;</th>
+                        <th data-sort="name" style="cursor:pointer;">Name &#8597;</th>
+                        <th data-sort="description" style="cursor:pointer;">Description &#8597;</th>
+                        <th data-sort="start_date" style="cursor:pointer;">Start Date &#8597;</th>
+                        <th data-sort="end_date" style="cursor:pointer;">End Date &#8597;</th>
+                        <th data-sort="active" style="cursor:pointer;">Active &#8597;</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+            <div id="pagination"></div>
+        </section>
+        <div id="message"></div>
+    </div>
+    <script>
+        let editingId = null;
+        let allCatalogues = [];
+        let currentPage = 1;
+        const pageSize = 5; // Show 5 per page
+
+        // Sorting state
+        let sortColumn = null;
+        let sortDirection = 1; // 1 = ascending, -1 = descending
+
+        function setFormEditMode(isEdit) {
+            const form = document.getElementById('catalogue-form');
+            // Always use row layout for both add and edit
+            form.classList.remove('edit-mode');
+        }
+
+        // Show/hide add form logic
+        const showAddBtn = document.getElementById('show-add-form');
+        const catalogueForm = document.getElementById('catalogue-form');
+        showAddBtn.addEventListener('click', function() {
+            catalogueForm.style.display = catalogueForm.style.display === 'none' ? 'flex' : 'none';
+            if (catalogueForm.style.display === 'flex') {
+                showAddBtn.textContent = 'Hide Form';
+                setFormEditMode(false); // Always side-by-side
+            } else {
+                showAddBtn.textContent = 'Add New Catalogue';
+                catalogueForm.reset();
+                document.getElementById('submit-btn').textContent = 'Create';
+                editingId = null;
+                setFormEditMode(false);
+            }
+        });
+
+        // Fetch and display all catalogues from backend
+        async function loadCatalogues() {
+            document.getElementById('loading-indicator').style.display = 'block';
+            document.getElementById('catalogue-table').style.opacity = '0.4';
+            try {
+                const res = await fetch('/catalogues');
+                const data = await res.json();
+                allCatalogues = data.data || [];
+                renderCatalogueTable(allCatalogues);
+            } finally {
+                document.getElementById('loading-indicator').style.display = 'none';
+                document.getElementById('catalogue-table').style.opacity = '1';
+            }
+        }
+
+        function getSortValue(cat, col) {
+            if (col === "id") return cat.catalogue_id || cat.id;
+            if (col === "name") return (cat.name || "").toLowerCase();
+            if (col === "description") return (cat.description || cat.catalogue_description || "").toLowerCase();
+            if (col === "start_date") return cat.start_date || "";
+            if (col === "end_date") return cat.end_date || "";
+            if (col === "active") return cat.status !== undefined ? cat.status : cat.is_active;
+            return "";
+        }
+
+        function renderCatalogueTable(catalogues) {
+            const tbody = document.querySelector('#catalogue-table tbody');
+            tbody.innerHTML = '';
+            // Reset table body styles to ensure consistency across pages
+            tbody.style.margin = "0";
+            tbody.style.padding = "0";
+            tbody.style.background = "";
+            tbody.style.border = "";
+            tbody.style.boxShadow = "";
+            tbody.style.display = "";
+            tbody.style.verticalAlign = "";
+            // Pagination logic
+            const pageSize = 5;
+            const startIdx = (currentPage - 1) * pageSize;
+            const endIdx = startIdx + pageSize;
+            const pageData = catalogues.slice(startIdx, endIdx);
+            pageData.forEach(cat => {
+                const isActive = cat.status !== undefined ? cat.status : cat.is_active;
+                const activeBadge = isActive == 1
+                    ? `<span class="status-badge active-badge">Active</span>`
+                    : `<span class="status-badge deactive-badge">Inactive</span>`;
+                // Format created_at if available
+                let createdAt = cat.created_at || cat.createdAt || '';
+                if (createdAt) {
+                    try {
+                        const dt = new Date(createdAt);
+                        createdAt = dt.toLocaleString();
+                    } catch (e) {}
+                }
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${cat.catalogue_id || cat.id}</td>
+                    <td>${cat.name}</td>
+                    <td>${cat.description || cat.catalogue_description || ''}</td>
+                    <td>${cat.start_date || ''}</td>
+                    <td>${cat.end_date || ''}</td>
+                    <td>${activeBadge}</td>
+                    <td>
+                        <button type="button" onclick="editCatalogue('${cat.catalogue_id || cat.id}')">Update</button>
+                        <button type="button" onclick="deleteCatalogue('${cat.catalogue_id || cat.id}')">Delete</button>
+                    </td>
+                `;
+                // Add created time as a new row below each catalogue row if available
+                if (createdAt) {
+                    const timeRow = document.createElement('tr');
+                    timeRow.innerHTML = `<td colspan="7" style="font-size:0.98em;color:#888;padding-top:0;padding-bottom:10px;">
+                        <span>Created at: ${createdAt}</span>
+                    </td>`;
+                    tbody.appendChild(tr);
+                    tbody.appendChild(timeRow);
+                } else {
+                    tbody.appendChild(tr);
+                }
+            });
+            renderPagination(catalogues.length);
+            // Ensure no extra spacing or style differences after rendering
+            tbody.style.margin = "0";
+            tbody.style.padding = "0";
+            tbody.style.background = "";
+            tbody.style.border = "";
+            tbody.style.boxShadow = "";
+            tbody.style.display = "";
+            tbody.style.verticalAlign = "";
+        }
+
+        function renderPagination(totalItems) {
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+            pagination.innerHTML = '';
+            const pageSize = 5;
+            const totalPages = Math.ceil(totalItems / pageSize);
+            if (totalPages <= 1) return;
+
+            // Previous button
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = 'Prev';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    filterAndRender();
+                }
+            };
+            pagination.appendChild(prevBtn);
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = i;
+                    pageBtn.disabled = i === currentPage;
+                    pageBtn.style.fontWeight = i === currentPage ? 'bold' : '';
+                    pageBtn.onclick = () => {
+                        currentPage = i;
+                        filterAndRender();
+                    };
+                    pagination.appendChild(pageBtn);
+                } else if (
+                    (i === currentPage - 3 && currentPage > 4) ||
+                    (i === currentPage + 3 && currentPage < totalPages - 3)
+                ) {
+                    const dots = document.createElement('span');
+                    dots.textContent = '...';
+                    dots.style.padding = '0 6px';
+                    pagination.appendChild(dots);
+                }
+            }
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Next';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    filterAndRender();
+                }
+            };
+            pagination.appendChild(nextBtn);
+        }
+
+        function filterAndRender() {
+            const query = document.getElementById('search-bar').value.trim().toLowerCase();
+            const activeFilter = document.getElementById('active-filter').value;
+            let filtered = allCatalogues.filter(cat =>
+                (cat.name && cat.name.toLowerCase().includes(query)) ||
+                (cat.description && cat.description.toLowerCase().includes(query)) ||
+                (cat.catalogue_description && cat.catalogue_description.toLowerCase().includes(query)) ||
+                (cat.catalogue_id && cat.catalogue_id.toString().includes(query)) ||
+                (cat.id && cat.id.toString().includes(query))
+            );
+            if (activeFilter === "active") {
+                filtered = filtered.filter(cat =>
+                    (cat.status !== undefined ? cat.status : cat.is_active) == 1
+                );
+            } else if (activeFilter === "inactive") {
+                filtered = filtered.filter(cat =>
+                    (cat.status !== undefined ? cat.status : cat.is_active) == 0
+                );
+            }
+            // Sorting
+            if (sortColumn) {
+                filtered = filtered.slice().sort((a, b) => {
+                    let va = getSortValue(a, sortColumn);
+                    let vb = getSortValue(b, sortColumn);
+                    // For date columns, compare as dates
+                    if (sortColumn === "start_date" || sortColumn === "end_date") {
+                        va = va || "";
+                        vb = vb || "";
+                        return (new Date(va) - new Date(vb)) * sortDirection;
+                    }
+                    // For ID and active, compare as numbers
+                    if (sortColumn === "id" || sortColumn === "active") {
+                        va = Number(va);
+                        vb = Number(vb);
+                        return (va - vb) * sortDirection;
+                    }
+                    // For strings
+                    if (va < vb) return -1 * sortDirection;
+                    if (va > vb) return 1 * sortDirection;
+                    return 0;
+                });
+            }
+            // Reset to first page if current page is out of range
+            const totalPages = Math.ceil(filtered.length / pageSize);
+            if (currentPage > totalPages) currentPage = 1;
+            renderCatalogueTable(filtered);
+        }
+
+        document.getElementById('search-bar').addEventListener('input', function() {
+            currentPage = 1;
+            filterAndRender();
+        });
+        document.getElementById('active-filter').addEventListener('change', function() {
+            currentPage = 1;
+            filterAndRender();
+        });
+
+        window.editCatalogue = function(id) {
+            // Clear message when editing starts
+            document.getElementById('message').textContent = '';
+            fetch(`/catalogues`)
+                .then(res => res.json())
+                .then(data => {
+                    const catalogues = data.data || [];
+                    const cat = catalogues.find(c => (c.catalogue_id || c.id).toString() === id.toString());
+                    if (cat) {
+                        document.getElementById('catalogue_id').value = cat.catalogue_id || cat.id;
+                        document.getElementById('name').value = cat.name;
+                        document.getElementById('description').value = cat.description || cat.catalogue_description || '';
+                        // Only set start_date and end_date if they have values
+                        if (cat.start_date) {
+                            document.getElementById('start_date').value = cat.start_date;
+                        } else {
+                            document.getElementById('start_date').value = '';
+                        }
+                        if (cat.end_date) {
+                            document.getElementById('end_date').value = cat.end_date;
+                        } else {
+                            document.getElementById('end_date').value = '';
+                        }
+                        document.getElementById('is_active').value = cat.status !== undefined ? cat.status : cat.is_active;
+                        editingId = cat.catalogue_id || cat.id;
+                        document.getElementById('submit-btn').textContent = 'Update';
+                        catalogueForm.style.display = 'flex';
+                        // Keep the form in row layout
+                        setFormEditMode(false);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching catalogue for edit:', error);
+                    document.getElementById('message').textContent = 'Error loading catalogue for edit.';
+                });
+        };
+
+        // Complete the form submission logic
+        catalogueForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const catalogueId = document.getElementById('catalogue_id').value;
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            const isActive = document.getElementById('is_active').value;
+
+            const payload = {
+                catalogue_id: parseInt(catalogueId),
+                name: name,
+                description: description,
+                start_date: startDate,
+                end_date: endDate,
+                is_active: parseInt(isActive)
+            };
+
+            let url = '/catalogues';
+            let method = 'POST';
+
+            if (editingId) {
+                url = `/catalogues/${editingId}`;
+                method = 'PUT';
+                // Remove catalogue_id from payload for PUT request if your API expects it in the URL
+                delete payload.catalogue_id;
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                const messageDiv = document.getElementById('message');
+
+               if (res.ok) {
+    messageDiv.textContent = data.message || (editingId ? 'Catalogue updated successfully!' : 'Catalogue created successfully!');
+    messageDiv.style.color = 'green'; // optional: green success text
+
+    catalogueForm.reset();
+    catalogueForm.style.display = 'none';
+    showAddBtn.textContent = 'Add New Catalogue';
+    document.getElementById('submit-btn').textContent = 'Create';
+    editingId = null;
+    loadCatalogues();
+
+    // 🕒 Clear message after 2 seconds
+    setTimeout(() => {
+        messageDiv.textContent = '';
+    }, 2000);
+
+} else {
+    messageDiv.textContent = data.message || 'An error occurred.';
+    messageDiv.style.color = 'red'; // optional: red error text
+
+    // 🕒 Clear error after 2 seconds
+    setTimeout(() => {
+        messageDiv.textContent = '';
+    }, 2000);
+}
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                document.getElementById('message').textContent = 'Network error or server unreachable.';
+            }
+        });
+
+        // Complete the delete logic
+       window.deleteCatalogue = async function(id) {
+    if (!confirm('Are you sure you want to delete this catalogue?')) {
+        return;
+    }
+
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = ''; 
+    try {
+        const res = await fetch(`/catalogues/${id}`, {
+            method: 'DELETE'
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            messageDiv.textContent = data.message || 'Catalogue deleted successfully!';
+            messageDiv.style.color = 'green'; 
+            loadCatalogues(); 
+        } else {
+            messageDiv.textContent = data.message || 'Error deleting catalogue.';
+            messageDiv.style.color = 'red'; 
+        }
+
+    } catch (error) {
+        console.error('Error deleting catalogue:', error);
+        messageDiv.textContent = 'Network error or server unreachable during deletion.';
+        messageDiv.style.color = 'red';
+    }
+
+    // 🕒 Auto-clear message after 2 seconds
+    setTimeout(() => {
+        messageDiv.textContent = '';
+    }, 2000);
+};
+
+        // Back button logic
+        document.getElementById('back-btn').addEventListener('click', function() {
+            catalogueForm.style.display = 'none';
+            catalogueForm.reset();
+            document.getElementById('submit-btn').textContent = 'Create';
+            editingId = null;
+            showAddBtn.textContent = 'Add New Catalogue';
+            document.getElementById('message').textContent = ''; // Clear message
+            setFormEditMode(false);
+        });
+
+        // Initial load of catalogues
+        loadCatalogues();
+
+        // Add sorting functionality to table headers
+        document.querySelectorAll('#catalogue-table th[data-sort]').forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.getAttribute('data-sort');
+                if (sortColumn === column) {
+                    sortDirection *= -1; // Toggle direction
+                } else {
+                    sortColumn = column;
+                    sortDirection = 1; // Default to ascending for new column
+                }
+                filterAndRender();
+            });
+        });
+
+    </script>
+</body>
+</html>

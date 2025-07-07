@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Catalogue Management System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e3edf7 0%, #b2c9df 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            width: 370px;
+            margin: 0 auto;
+            padding: 38px 36px 32px 36px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13);
+            border: 1.5px solid #dbe7f3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 12px;
+            color: #1a3c4e;
+            letter-spacing: 1px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        .login-subtitle {
+            color: #3a5a7a;
+            font-size: 1.02em;
+            margin-bottom: 22px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-bottom: 18px;
+            text-align: center;
+            font-size: 1.08em;
+            background: #fff8f7;
+            border-radius: 4px;
+            padding: 7px 0;
+            box-shadow: 0 1px 4px #e74c3c22;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #1a3c4e;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1.5px solid #bfc9d9;
+            border-radius: 7px;
+            font-size: 1em;
+            background: #f7fafd;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(44, 62, 80, 0.04);
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border: 1.5px solid #1976d2;
+            outline: none;
+            background: #eaf3ff;
+            box-shadow: 0 2px 8px #1976d233;
+        }
+        button {
+            width: 100%;
+            padding: 12px 0;
+            background: linear-gradient(90deg, #1976d2 60%, #4e8cff 100%);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            font-size: 1.08em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px #4e8cff22;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #4e8cff 60%, #1976d2 100%);
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.13);
+        }
+        @media (max-width: 500px) {
+            .login-container {
+                width: 98vw;
+                padding: 18px 4vw 16px 4vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-logo">
+            <img src="/static/login-logo.png" alt="Logo" onerror="this.style.display='none'">
+        </div>
+        <h2>Login</h2>
+        <div class="login-subtitle">Sign in to access the Catalogue Management System</div>
+        <!-- Error Message Block -->
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+        <form method="POST" action="/login" autocomplete="off">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autofocus>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <div style="display: flex; justify-content: center;">
+                <button type="submit" style="width: 60%;">Login</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // ...existing code...
+
+        function filterAndRender() {
+            const query = document.getElementById('search-bar').value.trim().toLowerCase();
+            const activeFilter = document.getElementById('active-filter').value;
+            let filtered = allCatalogues.filter(cat =>
+                (cat.name && cat.name.toLowerCase().includes(query)) ||
+                (cat.description && cat.description.toLowerCase().includes(query)) ||
+                (cat.catalogue_description && cat.catalogue_description.toLowerCase().includes(query)) ||
+                (cat.catalogue_id && cat.catalogue_id.toString().includes(query)) ||
+                (cat.id && cat.id.toString().includes(query))
+            );
+            if (activeFilter === "active") {
+                filtered = filtered.filter(cat =>
+                    (cat.status !== undefined ? cat.status : cat.is_active) == 1
+                );
+            } else if (activeFilter === "inactive") {
+                filtered = filtered.filter(cat =>
+                    (cat.status !== undefined ? cat.status : cat.is_active) == 0
+                );
+            }
+            // Sorting should always apply to filtered data
+            if (sortColumn) {
+                filtered = filtered.slice().sort((a, b) => {
+                    let va = getSortValue(a, sortColumn);
+                    let vb = getSortValue(b, sortColumn);
+                    // For date columns, compare as dates
+                    if (sortColumn === "start_date" || sortColumn === "end_date") {
+                        va = va || "";
+                        vb = vb || "";
+                        return (new Date(va) - new Date(vb)) * sortDirection;
+                    }
+                    // For ID and active, compare as numbers
+                    if (sortColumn === "id" || sortColumn === "active") {
+                        va = Number(va);
+                        vb = Number(vb);
+                        return (va - vb) * sortDirection;
+                    }
+                    // For strings
+                    if (va < vb) return -1 * sortDirection;
+                    if (va > vb) return 1 * sortDirection;
+                    return 0;
+                });
+            }
+            // Reset to first page if current page is out of range
+            const totalPages = Math.ceil(filtered.length / pageSize);
+            if (currentPage > totalPages) currentPage = 1;
+            renderCatalogueTable(filtered);
+        }
+
+        // ...existing code...
+    </script>
+</body>
+</html>
+

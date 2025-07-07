@@ -1,0 +1,266 @@
+/* Reset some default styles */
+body, h1, h2, table, input, select, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #e0e7ef 0%, #f0f4f9 100%);
+    min-height: 100vh;
+    color: #222;
+    /* Add a subtle pattern overlay */
+    background-image: url('https://www.transparenttextures.com/patterns/symphony.png');
+}
+
+h1 {
+    text-align: center;
+    margin: 30px 0 10px 0;
+    font-size: 2.5em;
+    color: #2b4a6f;
+    letter-spacing: 2px;
+    text-shadow: 1px 2px 8px #b0c4de;
+    /* Animation */
+    opacity: 0;
+    transform: translateY(-40px) scale(0.95);
+    animation: headingFadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes headingFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+section {
+    background: #fff;
+    margin: 30px 0 0 0;
+    padding: 30px 40px 20px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(78, 127, 176, 0.08);
+    max-width: 1100px;
+    min-width: 800px;
+    border: 1.5px solid #e3eaf5;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+
+section:hover {
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.16);
+    border: 1.5px solid #4e8cff;
+}
+
+h2 {
+    color: #2b4a6f;
+    margin-bottom: 18px;
+    font-size: 1.3em;
+    border-left: 4px solid #4e8cff;
+    padding-left: 10px;
+    text-shadow: 0 1px 0 #fff;
+}
+
+#catalogue-form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-end;
+    margin-bottom: 10px;
+    background: #f5faff;
+    border-radius: 8px;
+    padding: 18px 12px 10px 12px;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+}
+
+#catalogue-form input,
+#catalogue-form select {
+    flex: 1 1 180px;
+    min-width: 180px;
+    max-width: 220px;
+    width: auto;
+    padding: 10px;
+    border: 1px solid #bfc9d9;
+    border-radius: 6px;
+    font-size: 1em;
+    background: #f7fafd;
+    transition: border 0.2s;
+    box-shadow: 0 1px 3px rgba(44, 62, 80, 0.04);
+}
+
+#catalogue-form input:focus,
+#catalogue-form select:focus {
+    border: 1.5px solid #4e8cff;
+    outline: none;
+    background: #eaf3ff;
+    box-shadow: 0 2px 8px #4e8cff33;
+}
+
+#catalogue-form button {
+    flex: 1 1 120px;
+    min-width: 120px;
+    padding: 12px 0;
+    background: linear-gradient(90deg, #4e8cff 60%, #2b4a6f 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px #4e8cff33;
+    letter-spacing: 1px;
+}
+
+#catalogue-form button:hover {
+    background: linear-gradient(90deg, #2b4a6f 60%, #4e8cff 100%);
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.13);
+}
+
+#catalogue-form button:active {
+    background: #2b4a6f;
+    color: #fff;
+}
+
+#catalogue-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: #f7fafd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.07);
+    border: 1.5px solid #e3eaf5;
+}
+
+#catalogue-table th, #catalogue-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #e3eaf5;
+}
+
+#catalogue-table th {
+    background: linear-gradient(90deg, #4e8cff 80%, #2b4a6f 100%);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px #2b4a6f33;
+}
+
+#catalogue-table tr:last-child td {
+    border-bottom: none;
+}
+
+#catalogue-table tr:nth-child(even) {
+    background: #eaf3ff;
+}
+
+#catalogue-table tr:hover {
+    background: #d2e6ff;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+#catalogue-table button {
+    background: #fff;
+    color: #4e8cff;
+    border: 1px solid #4e8cff;
+    border-radius: 4px;
+    padding: 5px 12px;
+    margin-right: 5px;
+    font-size: 0.98em;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    outline: none;
+    box-shadow: 0 1px 4px #4e8cff22;
+}
+
+#catalogue-table button:hover {
+    background: #4e8cff;
+    color: #fff;
+}
+
+#catalogue-table button:active {
+    background: #2b4a6f;
+    color: #fff;
+}
+
+#message {
+    text-align: center;
+    margin: 18px 0 0 0;
+    font-size: 1.1em;
+    color: #e74c3c;
+    min-height: 24px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 6px 0;
+    border-radius: 4px;
+    background: #fff8f7;
+    box-shadow: 0 1px 4px #e74c3c22;
+}
+
+div[style*="text-align: right"] {
+    /* Style the logout area */
+    background: #f7fafd;
+    border-bottom: 1px solid #e3eaf5;
+    padding: 10px 0 10px 0;
+    box-shadow: 0 2px 8px #4e8cff11;
+}
+
+div[style*="text-align: right"] button {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px #e74c3c22;
+}
+
+div[style*="text-align: right"] button:hover {
+    background: #c0392b;
+}
+
+::-webkit-input-placeholder { color: #bfc9d9; }
+::-moz-placeholder { color: #bfc9d9; }
+:-ms-input-placeholder { color: #bfc9d9; }
+::placeholder { color: #bfc9d9; }
+
+@media (max-width: 1300px) {
+    section {
+        max-width: 98vw;
+        min-width: 0;
+        padding: 18px 2vw 10px 2vw;
+    }
+    #catalogue-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #catalogue-form input,
+    #catalogue-form select,
+    #catalogue-form button {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 800px) {
+    section {
+        padding: 18px 6px 10px 6px;
+        max-width: 98vw;
+    }
+    #catalogue-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+    #catalogue-form button {
+        width: 100%;
+    }
+    #catalogue-table th, #catalogue-table td {
+        padding: 8px 4px;
+        font-size: 0.98em;
+    }
+}
